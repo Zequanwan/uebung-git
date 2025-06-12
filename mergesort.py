@@ -1,51 +1,61 @@
-def ASSIGNMENT(new_list, i, old_list, j):
-    new_list[i] = old_list[j]
+from typing import List
+
+def merge_sort(data: List[int]) -> List[int]:
+    """
+    Sorts a list of integers using the merge sort algorithm.
+
+    Args:
+        data: A list of integers to sort.
+
+    Returns:
+        A new list containing all elements from `data` in ascending order.
+    """
+    # 1) 基本情况：长度 ≤ 1 时直接返回拷贝
+    if len(data) <= 1:
+        return data.copy()
+
+    # 2) 分割列表
+    mid = len(data) // 2
+    left = merge_sort(data[:mid])
+    right = merge_sort(data[mid:])
+
+    # 3) 合并两个已排序子列表
+    return _merge(left, right)
 
 
-def mergeSort(list_to_sort_by_merge):
-    if (
-        len(list_to_sort_by_merge) > 1
-        and not len(list_to_sort_by_merge) < 1
-        and len(list_to_sort_by_merge) != 0
-    ):
-        mid = len(list_to_sort_by_merge) // 2
-        left = list_to_sort_by_merge[:mid]
-        right = list_to_sort_by_merge[mid:]
+def _merge(left: List[int], right: List[int]) -> List[int]:
+    """
+    Merges two sorted lists into one sorted list, preserving stability.
 
-        mergeSort(left)
-        mergeSort(right)
+    Args:
+        left: First sorted list.
+        right: Second sorted list.
 
-        l = 0
-        r = 0
-        i = 0
+    Returns:
+        A merged, sorted list containing all elements from `left` and `right`.
+    """
+    merged: List[int] = []      # 4) 有意义的变量名
+    i = j = 0
 
-        while l < len(left) and r < len(right):
-            if left[l] <= right[r]:
-                ASSIGNMENT(new_list=list_to_sort_by_merge, i=i, old_list=left, j=l)
-                l += 1
-            else:
-                ASSIGNMENT(new_list=list_to_sort_by_merge, i=i, old_list=right, j=r)
-                r += 1
+    # 5) 使用 <= 保持稳定性：相等时优先选 left
+    while i < len(left) and j < len(right):
+        if left[i] <= right[j]:
+            merged.append(left[i])
             i += 1
+        else:
+            merged.append(right[j])
+            j += 1
 
-        while l < len(left):
-            list_to_sort_by_merge[i] = left[l]
-            l += 1
-            i += 1
-
-        while r < len(right):
-            list_to_sort_by_merge[i] = right[r]
-            r += 1
-            i += 1
+    # 6) 追加剩余元素
+    merged.extend(left[i:])
+    merged.extend(right[j:])
+    return merged
 
 
-import matplotlib.pyplot as plt
+if __name__ == "__main__":
+    # 7) 主入口示例，并保持原列表不被修改
+    sample = [5, 2, 9, 1, 5, 6]
+    print(f"Original: {sample}")
+    sorted_list = merge_sort(sample)
+    print(f"Sorted:   {sorted_list}")
 
-my_list = [54, 26, 93, 17, 77, 31, 44, 55, 20]
-x = range(len(my_list))
-plt.plot(x, my_list)
-plt.show()
-mergeSort(my_list)
-x = range(len(my_list))
-plt.plot(x, my_list)
-plt.show()
